@@ -31,7 +31,6 @@ const Post = mongoose.model("Post", postsSchema);
 app.get(
   "/", (req, res) => {
     Post.find().then((posts)=>{
-      console.log("Home" + posts);
       res.render("home", {
         posts: posts
       });
@@ -82,13 +81,6 @@ app.post(
    res.redirect("/");
   }
 )
-
-
-
-
-
-
-
 
 
 
