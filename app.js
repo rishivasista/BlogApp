@@ -4,7 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const _ = require("lodash");
-
+const mongoose = require("mongoose");
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
 const aboutContent = "Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Dictumst vestibulum rhoncus est pellentesque elit ullamcorper. Non diam phasellus vestibulum lorem sed. Platea dictumst quisque sagittis purus sit. Egestas sed sed risus pretium quam vulputate dignissim suspendisse. Mauris in aliquam sem fringilla. Semper risus in hendrerit gravida rutrum quisque non tellus orci. Amet massa vitae tortor condimentum lacinia quis vel eros. Enim ut tellus elementum sagittis vitae. Mauris ultrices eros in cursus turpis massa tincidunt dui.";
 const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
@@ -19,31 +19,46 @@ app.use(bodyParser.urlencoded({
 app.use(express.static("public"));
 
 
-const posts = [];
+const local_db = "mongodb://localhost:27017/BlogApp";
+const online_db = "mongodb+srv://rishi:Password@blogdatabase.zm6kuqo.mongodb.net/?retryWrites=true&w=majority";
+
+mongoose.connect(online_db);
+
+const postsSchema = new mongoose.Schema({
+  post_title : String,
+  post_content: String
+});
+
+const Post = mongoose.model("Post", postsSchema);
+
 
 app.get(
   "/", (req, res) => {
-    var post = req.params.post;
-    console.log(post);
-    res.render("home", {
-      posts: posts
-    });
-    console.log(post);
+    // var post = req.params.post;
+    // console.log(post);
+    Post.find().then((posts)=>{
+      console.log("Home" + posts);
+      res.render("home", {
+        posts: posts
+      });
+    }).catch((err)=>{console.log(err)});
+    
+    // console.log(post);
   }
 );
 
 
-app.get("/posts/:post", (req, res)=>{
-  let post_title = _.lowerCase(req.params.post);
-  posts.forEach((post)=>{
-    if(_.lowerCase(post.title) === post_title)
-    {
+app.get("/posts/:postid", (req, res)=>{
+  let post_id = req.params.postid;
+  Post.findById(post_id).then((post)=>{
+    if(post){
       res.render("post", {
-        postTitle: post.title,
-        postContent: post.content
+        postTitle: post.post_title,
+        postContent: post.post_content
       })
     }
-  });
+  }).catch((err)=>console.log(err));
+
 });
 
 app.get(
@@ -69,11 +84,11 @@ app.get(
 
 app.post(
   "/compose", (req, res)=> {
-   let post = {
-      title: req.body.title,
-      content: req.body.content,
-   }
-   posts.push(post);
+   let post = new Post({
+      post_title: req.body.title,
+      post_content: req.body.content,
+   });
+   post.save();
    res.redirect("/");
   }
 )
