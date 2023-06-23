@@ -21,7 +21,7 @@
 }
 
 .footer {
-	position: absolute;
+	position: fixed;
     bottom: 1%;
 	text-align: center;
 	bottom: 0;
