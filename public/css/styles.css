@@ -20,7 +20,8 @@
 }
 
 .footer {
-	position: absolute;
+	position: relative;
+    bottom: 2%;
 	text-align: center;
 	bottom: 0;
 	width: 100%;
