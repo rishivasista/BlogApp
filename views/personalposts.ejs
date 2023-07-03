@@ -1,0 +1,14 @@
+<%- include('partials/header') -%>
+<script>
+    document.querySelector(".dropdown").classList.remove("hidden");
+</script>
+<h1>Personal Sites</h1>
+<% posts.forEach((post)=> {%>
+    <% let post_content = post.post_content%>
+    <h2><%= post.post_title%></h2>
+    <p> <%= post.post_content.slice(0, 100)%>.... <a href="/blog/posts/<%= post._id %>">Read More</a></p>
+    <a class="btn btn-danger" href="/delete/<%=post._id%>">Delete</a>
+    <% }) %>
+
+
+<%- include('partials/footer')-%>

@@ -1,5 +1,8 @@
 <%- include('partials/header') -%>
-    <h1><%= postTitle %></h1>
+<script>
+    document.querySelector(".dropdown").classList.remove("hidden");
+</script>   
+<h1><%= postTitle %></h1>
     <p><%= postContent %></p>
 
 <%- include('partials/footer') -%>

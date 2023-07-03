@@ -1,12 +1,18 @@
-<%- include("partials/header") -%>
-<h1>Home</h1>
-<p>Hi there, welcome to the blog website where in you can share anything with everyone while staying anonymous.</p>
-<p>Simply visit <a href="https://blog-app-to22.onrender.com/compose">https://blog-app-to22.onrender.com/compose</a> to compose.</p>
-<p>To delete your post, please mail vasistarishi@gmail.com with your post title</p>
-<% posts.forEach((post)=> {%>
-    <% let post_content = post.post_content%>
-    <h2><%= post.post_title%></h2>
-    <p> <%= post.post_content.slice(0, 100)%>.... <a href="/posts/<%= post._id %>">Read More</a></p>
-<% }) %>
+<%- include('partials/header') -%>
 
-<%- include("partials/footer") -%>
+<div class="logo bg-body-tertiary rounded-3">
+    <svg class="bi mt-4 mb-3" style="color: var(--bs-indigo);" width="100" height="100"><use xlink:href="#bootstrap"></use></svg>
+    <img class="mx-auto logo-img" src="images/profile.png"/>
+    <div class="d-inline-flex gap-2 mb-5">
+        
+      <a href="/login" class="d-inline-flex align-items-center btn btn-primary btn-lg px-4 rounded-pill" type="button">
+        Log In
+        <svg class="bi ms-2" width="24" height="24"><use xlink:href="#arrow-right-short"></use></svg>
+      </a>
+      <a href="/register" class="btn btn-outline-primary btn-lg px-4 rounded-pill" type="button">
+        Sign Up
+      </a>
+    </div>
+  </div>
+
+<%- include('partials/footer') -%>

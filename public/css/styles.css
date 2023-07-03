@@ -1,3 +1,19 @@
+
+.logo{
+    text-align: center;
+    align-items: center;
+}
+.logo-img{
+    position: relative;
+    right: 5%;
+    width: 25%;
+    /* margin: 2% 0; */
+    margin: auto;
+    text-align: center;
+}
+.rounded-pill{
+    margin: 0 1%;
+}
 .container-fluid {
     padding-top: 70px;
     padding-bottom: 70px;
