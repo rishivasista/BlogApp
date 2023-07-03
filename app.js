@@ -66,7 +66,7 @@ passport.use(new GoogleStrategy({
   clientID: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   scope: ["profile"],
-  callbackURL: "https://blog-app-to22.onrender.com/auth/google/blog"
+  callbackURL: "https://blogapp-onyn.onrender.com/auth/google/blog"
 },
 function(accessToken, refreshToken, profile, cb) {
   User.findOrCreate({ googleId: profile.id }, function (err, user) {
