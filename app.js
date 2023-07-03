@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const session = require("express-session");
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate = require("mongoose-findorcreate");
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -28,6 +30,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+
 mongoose.connect(online_db);
 
 const postsSchema = new mongoose.Schema({
@@ -50,6 +53,7 @@ const usersSchema = new mongoose.Schema({
 });
 
 usersSchema.plugin(passportLocalMongoose);
+usersSchema.plugin(findOrCreate);
 
 const User = mongoose.model("User", usersSchema);
 
@@ -58,8 +62,27 @@ passport.use(User.createStrategy());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
+passport.use(new GoogleStrategy({
+  clientID: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  scope: ["profile"],
+  callbackURL: "https://blog-app-to22.onrender.com/auth/google/blog"
+},
+function(accessToken, refreshToken, profile, cb) {
+  User.findOrCreate({ googleId: profile.id }, function (err, user) {
+    return cb(err, user);
+  });
+}
+));
 
+app.get('/auth/google',
+  passport.authenticate('google'));
 
+  app.get('/auth/google/blog', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/blog');
+  });
 app.route("/")
   .get((req, res) => {
     res.render("home");
@@ -98,10 +121,10 @@ app.route("/register")
       username: username
     }, pswd, (err, user) => {
       if (err) {
-        res.redirect("/login");
+        res.redirect("/");
       } else {
         passport.authenticate("local", {
-          failureRedirect: "/login",
+          failureRedirect: "/",
         })(req, res, () => {
           res.redirect("/blog");
         })
@@ -126,7 +149,7 @@ app.get(
         console.log(err)
       });
     } else {
-      res.redirect("/login");
+      res.redirect("/");
     }
   }
 );
@@ -156,13 +179,13 @@ app.get("/blog/posts/:postid", (req, res) => {
       }).catch((err) => console.log(err));
     }
   } else
-    res.redirect("/login");
+    res.redirect("/");
 });
 app.get("/personalposts", (req, res)=>{
   if(req.isAuthenticated())
   res.redirect("/blog/posts/myposts");
   else
-  res.redirect("/login");
+  res.redirect("/");
 })
 
 app.get("/delete/:postId", (req, res)=>{
@@ -190,7 +213,7 @@ app.get(
     if (req.isAuthenticated())
       res.render("compose");
     else
-      res.redirect("/login");
+      res.redirect("/");
   }
 );
 
